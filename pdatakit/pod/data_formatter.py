@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import yaml
 from typing import List, Dict, Optional
-from data_splitter import DataSplitter
+from pdatakit.pod.data_splitter import DataSplitter
 from PIL import Image
 import xml.etree.ElementTree as ET
 

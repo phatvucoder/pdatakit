@@ -4,7 +4,7 @@ from typing import List, Tuple, Optional
 from sklearn.preprocessing import MultiLabelBinarizer
 from iterstrat.ml_stratifiers import MultilabelStratifiedShuffleSplit
 from collections import defaultdict
-from data_loader import DataLoader
+from pdatakit.pod.data_loader import DataLoader
 import matplotlib.pyplot as plt
 
 class DataSplitter:

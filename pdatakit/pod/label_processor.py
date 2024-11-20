@@ -1,6 +1,6 @@
 import os
 from typing import List, Optional, Union
-from data_loader import DataLoader
+from pdatakit.pod.data_loader import DataLoader
 
 class LabelProcessor:
     """
