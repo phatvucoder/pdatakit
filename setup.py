@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pdatakit',
-    version='0.0.1',
+    version='0.0.2',
     author='Hoang-Phat Vu',
     author_email='phatvucoder@gmail.com',
     description='A Python library for managing and processing datasets for machine learning workflows.',
