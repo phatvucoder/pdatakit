@@ -2,10 +2,10 @@
 
 import os
 from typing import Dict, Optional
-from data_loader import DataLoader
-from data_splitter import DataSplitter
-from label_processor import LabelProcessor
-from data_formatter import DataFormatter, FormatType
+from pdatakit.pod.data_loader import DataLoader
+from pdatakit.pod.data_splitter import DataSplitter
+from pdatakit.pod.label_processor import LabelProcessor
+from pdatakit.pod.data_formatter import DataFormatter, FormatType
 import matplotlib.pyplot as plt
 
 class DataProcessor:
