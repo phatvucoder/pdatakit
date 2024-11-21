@@ -135,17 +135,48 @@ class DataFormatter:
         voc_dir = Path(output_dir)
         jpeg_dir = voc_dir / "JPEGImages"
         annotations_dir = voc_dir / "Annotations"
+        imagesets_dir = voc_dir / "ImageSets" / "Main"
 
         # Create directory structure
-        for split in ["train", "val", "test"]:
-            (jpeg_dir / split).mkdir(parents=True, exist_ok=True)
-            (annotations_dir / split).mkdir(parents=True, exist_ok=True)
+        jpeg_dir.mkdir(parents=True, exist_ok=True)
+        annotations_dir.mkdir(parents=True, exist_ok=True)
+        imagesets_dir.mkdir(parents=True, exist_ok=True)
 
-        # Copy files and convert labels
-        for split, files in zip(["train", "val", "test"], [self.train_files, self.val_files, self.test_files]):
-            self._copy_files_voc(files, jpeg_dir / split, annotations_dir / split)
+        # Initialize dataset splits
+        splits = {
+            "train": self.train_files,
+            "val": self.val_files,
+            "test": self.test_files
+        }
+
+        # Process each split
+        for split_name, files in splits.items():
+            split_file = imagesets_dir / f"{split_name}.txt"
+            with split_file.open('w') as f_split:
+                for file in files:
+                    image_path = Path(file)
+                    if not image_path.exists():
+                        print(f"Warning: Image file {image_path} does not exist. Skipping.")
+                        continue
+
+                    # Copy image to JPEGImages
+                    dest_image_path = jpeg_dir / image_path.name
+                    shutil.copy2(image_path, dest_image_path)
+
+                    # Convert YOLO labels to VOC XML annotations
+                    label_path = image_path.with_suffix('.txt')
+                    if label_path.exists():
+                        self._convert_yolo_to_voc(image_path, label_path, annotations_dir)
+                    else:
+                        print(f"Warning: Label file {label_path} does not exist for image {image_path}.")
+                        # Optionally, create an empty annotation file
+                        (annotations_dir / f"{image_path.stem}.xml").touch()
+
+                    # Write image name (without extension) to the split file
+                    f_split.write(f"{image_path.stem}\n")
 
         print("VOC format created successfully.")
+
 
     def _copy_files(self, files: List[str], images_dest: Path, labels_dest: Optional[Path]):
         """Copy image and label files to respective directories for YOLO formats"""
