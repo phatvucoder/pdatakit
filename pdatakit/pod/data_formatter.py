@@ -320,15 +320,17 @@ class DataFormatter:
         print(f"Created data.yaml at {yaml_file}")
 
     def _create_coco_annotations(self, files: List[str], annotations_dir: Path, split: str):
-        """Create COCO format annotations"""
+        """Create COCO format annotations with proper validation and structure"""
         print(f"Creating COCO annotations for {split}...")
 
+        # Define COCO categories
         categories = [
             {"id": idx + 1, "name": self.class_mapping[idx]}
             for idx in range(self.num_classes)
         ]
         category_id_map = {idx: idx + 1 for idx in range(self.num_classes)}
 
+        # Initialize COCO annotation structure
         coco_annotations = {
             "images": [],
             "annotations": [],
@@ -351,7 +353,7 @@ class DataFormatter:
                 print(f"Warning: Unable to read image {image_path}. Skipping.")
                 continue
 
-            # Add image info
+            # Add image metadata to COCO structure
             coco_annotations["images"].append({
                 "id": image_id_counter,
                 "file_name": image_path.name,
@@ -359,7 +361,7 @@ class DataFormatter:
                 "width": width
             })
 
-            # Convert YOLO annotations to COCO format
+            # Convert YOLO annotations to COCO
             label_path = image_path.with_suffix('.txt')
             if label_path.exists():
                 try:
@@ -390,13 +392,13 @@ class DataFormatter:
                         print(f"Warning: Class ID {cls_id} does not exist in class_mapping. Skipping.")
                         continue
 
-                    # Convert normalized YOLO coordinates to COCO format
+                    # Convert YOLO bbox to COCO bbox
                     x = (x_center - w / 2) * width
                     y = (y_center - h / 2) * height
                     w_abs = w * width
                     h_abs = h * height
 
-                    # Ensure bbox is within image boundaries
+                    # Ensure bbox boundaries are within image
                     x = max(0, x)
                     y = max(0, y)
                     w_abs = min(w_abs, width - x)
@@ -417,7 +419,7 @@ class DataFormatter:
             image_id_counter += 1
 
         # Save COCO annotations
-        annotation_file = annotations_dir / f"{split}.json"
+        annotation_file = annotations_dir / f"instances_{split}.json"
         try:
             with annotation_file.open('w') as f:
                 json.dump(coco_annotations, f, indent=4)
