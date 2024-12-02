@@ -356,10 +356,9 @@ class DataFormatter:
 
         # Define COCO categories
         categories = [
-            {"id": idx + 1, "name": self.class_mapping[idx]}
+            {"id": idx, "name": self.class_mapping[idx]}
             for idx in range(self.num_classes)
         ]
-        category_id_map = {idx: idx + 1 for idx in range(self.num_classes)}
 
         # Initialize COCO annotation structure
         coco_annotations = {
@@ -438,7 +437,7 @@ class DataFormatter:
                     coco_annotations["annotations"].append({
                         "id": annotation_id_counter,
                         "image_id": image_id_counter,
-                        "category_id": category_id_map[cls_id],
+                        "category_id": cls_id,
                         "bbox": [x, y, w_abs, h_abs],
                         "area": w_abs * h_abs,
                         "iscrowd": 0
